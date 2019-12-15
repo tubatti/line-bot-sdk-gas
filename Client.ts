@@ -5,9 +5,9 @@ export class Client {
 
   constructor(private config: Line.ClientConfig) {}
 
-  public pushMessage(to: string, messages: Line.Message | Line.Message[]): void {
+  public pushMessage(to: string, messages: Line.Message | Line.Message[]): string {
     const messageArray = messages instanceof Array ? messages : [messages];
-    UrlFetchApp.fetch(this.pushUrl(), {
+    return UrlFetchApp.fetch(this.pushUrl(), {
       contentType: 'application/json',
       headers: this.authHeader(),
       method: 'post',
@@ -15,12 +15,12 @@ export class Client {
         messages: messageArray,
         to,
       }),
-    });
+    }).getContentText();
   }
 
-  public replyMessage(replyToken: string, messages: Line.Message | Line.Message[]): void {
+  public replyMessage(replyToken: string, messages: Line.Message | Line.Message[]): string {
     const messageArray = messages instanceof Array ? messages : [messages];
-    UrlFetchApp.fetch(this.replyUrl(), {
+    return UrlFetchApp.fetch(this.replyUrl(), {
       contentType: 'application/json',
       headers: this.authHeader(),
       method: 'post',
@@ -28,12 +28,12 @@ export class Client {
         messages: messageArray,
         replyToken,
       }),
-    });
+    }).getContentText();
   }
 
-  public multicast(to: string[], messages: Line.Message | Line.Message[]): void {
+  public multicast(to: string[], messages: Line.Message | Line.Message[]): string {
     const messageArray = messages instanceof Array ? messages : [messages];
-    UrlFetchApp.fetch(this.multicastUrl(), {
+    return UrlFetchApp.fetch(this.multicastUrl(), {
       contentType: 'application/json',
       headers: this.authHeader(),
       method: 'post',
@@ -41,7 +41,7 @@ export class Client {
         messages: messageArray,
         to,
       }),
-    });
+    }).getContentText();
   }
 
   public getProfile(userId: string): Line.Profile {
