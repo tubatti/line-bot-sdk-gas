@@ -11,6 +11,7 @@ export class Client {
       contentType: 'application/json',
       headers: this.authHeader(),
       method: 'post',
+      muteHttpExceptions: true,
       payload: JSON.stringify({
         messages: messageArray,
         to,
@@ -24,6 +25,7 @@ export class Client {
       contentType: 'application/json',
       headers: this.authHeader(),
       method: 'post',
+      muteHttpExceptions: true,
       payload: JSON.stringify({
         messages: messageArray,
         replyToken,
@@ -37,6 +39,7 @@ export class Client {
       contentType: 'application/json',
       headers: this.authHeader(),
       method: 'post',
+      muteHttpExceptions: true,
       payload: JSON.stringify({
         messages: messageArray,
         to,
@@ -48,6 +51,7 @@ export class Client {
     return JSON.parse(
       UrlFetchApp.fetch(this.userProfileUrl(userId), {
         headers: this.authHeader(),
+        muteHttpExceptions: true,
       }).getContentText()
     ) as Line.Profile;
   }
@@ -56,6 +60,7 @@ export class Client {
     return JSON.parse(
       UrlFetchApp.fetch(this.groupMemberProfileUrl(groupId, userId), {
         headers: this.authHeader(),
+        muteHttpExceptions: true,
       }).getContentText()
     ) as Line.Profile;
   }
@@ -64,6 +69,7 @@ export class Client {
     return JSON.parse(
       UrlFetchApp.fetch(this.roomMemberProfileUrl(roomId, userId), {
         headers: this.authHeader(),
+        muteHttpExceptions: true,
       }).getContentText()
     ) as Line.Profile;
   }
@@ -72,6 +78,7 @@ export class Client {
     return JSON.parse(
       UrlFetchApp.fetch(this.profileUrl(eventSource), {
         headers: this.authHeader(),
+        muteHttpExceptions: true,
       }).getContentText()
     ) as Line.Profile;
   }
@@ -80,6 +87,7 @@ export class Client {
     return JSON.parse(
       UrlFetchApp.fetch(this.groupMemberIdsUrl(groupId), {
         headers: this.authHeader(),
+        muteHttpExceptions: true,
       }).getContentText()
     ) as string[];
   }
@@ -88,6 +96,7 @@ export class Client {
     return JSON.parse(
       UrlFetchApp.fetch(this.roomMemberIdsUrl(roomId), {
         headers: this.authHeader(),
+        muteHttpExceptions: true,
       }).getContentText()
     ) as string[];
   }
@@ -95,6 +104,7 @@ export class Client {
   public getMessageContent(messageId: string): GoogleAppsScript.Base.Blob {
     return UrlFetchApp.fetch(this.contentUrl(messageId), {
       headers: this.authHeader(),
+      muteHttpExceptions: true,
     }).getBlob();
   }
 
@@ -102,6 +112,7 @@ export class Client {
     UrlFetchApp.fetch(this.leaveGroupUrl(groupId), {
       headers: this.authHeader(),
       method: 'post',
+      muteHttpExceptions: true,
     });
   }
 
@@ -109,6 +120,7 @@ export class Client {
     UrlFetchApp.fetch(this.leaveRoomUrl(roomId), {
       headers: this.authHeader(),
       method: 'post',
+      muteHttpExceptions: true,
     });
   }
 
@@ -116,6 +128,7 @@ export class Client {
     UrlFetchApp.fetch(this.leaveUrl(eventSource), {
       headers: this.authHeader(),
       method: 'post',
+      muteHttpExceptions: true,
     });
   }
 
@@ -123,6 +136,7 @@ export class Client {
     return JSON.parse(
       UrlFetchApp.fetch(this.richMenuUrl(richMenuId), {
         headers: this.authHeader(),
+        muteHttpExceptions: true,
       }).getContentText()
     );
   }
@@ -140,12 +154,14 @@ export class Client {
     UrlFetchApp.fetch(this.richMenuUrl(richMenuId), {
       headers: this.authHeader(),
       method: 'delete',
+      muteHttpExceptions: true,
     });
   }
 
   public getRichMenuIdOfUser(userId: string): string {
     return UrlFetchApp.fetch(this.userRichMenuUrl(userId), {
       headers: this.authHeader(),
+      muteHttpExceptions: true,
     }).getContentText();
   }
 
@@ -153,6 +169,7 @@ export class Client {
     UrlFetchApp.fetch(this.userRichMenuUrl(userId, richMenuId), {
       headers: this.authHeader(),
       method: 'post',
+      muteHttpExceptions: true,
     });
   }
 
@@ -160,12 +177,14 @@ export class Client {
     UrlFetchApp.fetch(this.userRichMenuUrl(userId), {
       headers: this.authHeader(),
       method: 'delete',
+      muteHttpExceptions: true,
     });
   }
 
   public getRichMenuImage(richMenuId: string): GoogleAppsScript.Base.Blob {
     return UrlFetchApp.fetch(this.richMenuContentUrl(richMenuId), {
       headers: this.authHeader(),
+      muteHttpExceptions: true,
     }).getBlob();
   }
 
@@ -178,6 +197,7 @@ export class Client {
       contentType,
       headers: this.authHeader(),
       method: 'post',
+      muteHttpExceptions: true,
       payload: data,
     });
   }
@@ -186,6 +206,7 @@ export class Client {
     return JSON.parse(
       UrlFetchApp.fetch(this.richMenuListUrl(), {
         headers: this.authHeader(),
+        muteHttpExceptions: true,
       }).getContentText()
     ).richmenus as Line.RichMenuResponse[];
   }
@@ -194,12 +215,14 @@ export class Client {
     UrlFetchApp.fetch(this.defaultRichMenuUrl(richMenuId), {
       headers: this.authHeader(),
       method: 'post',
+      muteHttpExceptions: true,
     });
   }
 
   public getDefaultRichMenuId(): string {
     return UrlFetchApp.fetch(this.defaultRichMenuUrl(), {
       headers: this.authHeader(),
+      muteHttpExceptions: true,
     }).getContentText();
   }
 
@@ -207,6 +230,7 @@ export class Client {
     UrlFetchApp.fetch(this.defaultRichMenuUrl(), {
       headers: this.authHeader(),
       method: 'delete',
+      muteHttpExceptions: true,
     });
   }
 
