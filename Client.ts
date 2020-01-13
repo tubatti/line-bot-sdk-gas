@@ -47,6 +47,20 @@ export class Client {
     }).getContentText();
   }
 
+  public broadcast(messages: Line.Message | Line.Message[], notificationDisabled: boolean = false): string {
+    const messageArray = messages instanceof Array ? messages : [messages];
+    return UrlFetchApp.fetch(this.broadcastUrl(), {
+      contentType: 'application/json',
+      headers: this.authHeader(),
+      method: 'post',
+      muteHttpExceptions: true,
+      payload: JSON.stringify({
+        messages: messageArray,
+        notificationDisabled,
+      }),
+    }).getContentText();
+  }
+
   public getProfile(userId: string): Line.Profile {
     return JSON.parse(
       UrlFetchApp.fetch(this.userProfileUrl(userId), {
@@ -238,6 +252,7 @@ export class Client {
   private pushUrl = () => this.apiUrl('message/push');
   private replyUrl = () => this.apiUrl('message/reply');
   private multicastUrl = () => this.apiUrl('message/multicast');
+  private broadcastUrl = () => this.apiUrl('message/broadcast');
   private contentUrl = (messageId: string) => this.apiUrl(`message/${messageId}/content`);
   private userProfileUrl = (userId: string) => this.apiUrl(`profile/${userId}`);
   private roomMemberProfileUrl = (roomId: string, userId: string) =>
