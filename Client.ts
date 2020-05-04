@@ -1,4 +1,5 @@
 import * as Line from '@line/bot-sdk';
+import * as Types from "./types";
 
 export class Client {
   private static baseUrl = 'https://api.line.me/v2/bot/';
@@ -58,6 +59,206 @@ export class Client {
         messages: messageArray,
         notificationDisabled,
       }),
+    }).getContentText();
+  }
+
+  /**
+   * ナローキャストメッセージ送信
+   * https://developers.line.biz/ja/reference/messaging-api/#send-narrowcast-message
+   * @param {NarrowcastRequestBody} requestBody
+   * @returns リクエストID・レスポンスコード・レスポンスボディ
+   */
+  public narrowcast(requestBody: Types.NarrowcastRequestBody) {
+    requestBody.messages = requestBody.messages instanceof Array ? requestBody.messages : [requestBody.messages];
+    const res = UrlFetchApp.fetch(this.narrowcastUrl(), {
+      contentType: 'application/json',
+      headers: this.authHeader(),
+      method: 'post',
+      muteHttpExceptions: true,
+      payload: JSON.stringify(requestBody),
+    });
+    const header: Line.MessageAPIResponseBase = res.getHeaders();
+    const requestId: string | undefined = header['x-line-request-id'];
+    const contentText: string = res.getContentText();
+    const code: number = res.getResponseCode();
+    return {requestId, code, contentText};
+  }
+
+  /**
+   * ナローキャストメッセージの進行状況を取得
+   * https://developers.line.biz/ja/reference/messaging-api/#get-narrowcast-progress-status
+   * @param requestId 
+   */
+  public getNarrowcastProgress(requestId: string) {
+    const res = UrlFetchApp.fetch(this.getNarrowcastProgressUrl(requestId), {
+      contentType: 'application/json',
+      headers: this.authHeader(),
+      method: 'get',
+      muteHttpExceptions: true,
+    });
+    const body: Types.NarrowcastProgressResponse = JSON.parse(res.getContentText());
+    const code: number = res.getResponseCode();
+    return {code, body};
+  }
+
+  /**
+   * ユーザーIDアップロード用のオーディエンスを作成
+   * https://developers.line.biz/ja/reference/messaging-api/#create-upload-audience-group
+   * @param uploadAudienceGroup 
+   */
+  public createUploadAudienceGroup(uploadAudienceGroup: Types.CreateUploadAudienceGroupRequestBody): string {
+    return UrlFetchApp.fetch(this.createUploadAudienceGroupUrl(), {
+      contentType: 'application/json',
+      headers: this.authHeader(),
+      method: 'post',
+      muteHttpExceptions: true,
+      payload: JSON.stringify(uploadAudienceGroup),
+    }).getContentText();
+  }
+
+  /**
+   * ユーザーIDアップロード用のオーディエンスにユーザーIDまたはIFAを追加
+   * https://developers.line.biz/ja/reference/messaging-api/#update-upload-audience-group
+   * @param uploadAudienceGroup 
+   */
+  public updateUploadAudienceGroup(uploadAudienceGroup: Types.updateUploadAudienceGroupRequestBody): string {
+    return UrlFetchApp.fetch(this.updateUploadAudienceGroupUrl(), {
+      contentType: 'application/json',
+      headers: this.authHeader(),
+      method: 'put',
+      muteHttpExceptions: true,
+      payload: JSON.stringify(uploadAudienceGroup),
+    }).getContentText();
+  }
+
+  /**
+   * クリックリターゲティング用のオーディエンスを作成
+   * https://developers.line.biz/ja/reference/messaging-api/#create-click-audience-group
+   * @param clickAudienceGroup 
+   */
+  public createClickAudienceGroup(clickAudienceGroup: {
+    description: string;
+    requestId: string;
+    clickUrl?: string;
+  }): string {
+
+    return UrlFetchApp.fetch(this.createClickAudienceGroupUrl(), {
+      contentType: 'application/json',
+      headers: this.authHeader(),
+      method: 'post',
+      muteHttpExceptions: true,
+      payload: JSON.stringify(clickAudienceGroup),
+    }).getContentText();    
+  }
+
+  /**
+   * インプレッションリターゲティング用のオーディエンスを作成
+   * https://developers.line.biz/ja/reference/messaging-api/#create-imp-audience-group
+   * @param impAudienceGroup 
+   */
+  public createImpAudienceGroup(impAudienceGroup: {
+    requestId: string;
+    description: string;
+  }): string {
+
+    return UrlFetchApp.fetch(this.createImpAudienceGroupUrl(), {
+      contentType: 'application/json',
+      headers: this.authHeader(),
+      method: 'post',
+      muteHttpExceptions: true,
+      payload: JSON.stringify(impAudienceGroup),
+    }).getContentText();    
+  }
+
+  /**
+   * オーディエンスの名前を更新
+   * https://developers.line.biz/ja/reference/messaging-api/#set-description-audience-group
+   * @param description 
+   * @param audienceGroupId 
+   */
+  public setDescriptionAudienceGroup(
+    description: string,
+    audienceGroupId: string,
+  ): string {
+
+    return UrlFetchApp.fetch(this.setDescriptionAudienceGroupUrl(audienceGroupId), {
+      contentType: 'application/json',
+      headers: this.authHeader(),
+      method: 'put',
+      muteHttpExceptions: true,
+      payload: JSON.stringify({description}),
+    }).getContentText();
+  }
+
+  /**
+   * オーディエンスを削除
+   * https://developers.line.biz/ja/reference/messaging-api/#delete-audience-group
+   * @param audienceGroupId 
+   */
+  public deleteAudienceGroup(audienceGroupId: string): string {
+    return UrlFetchApp.fetch(this.deleteAudienceGroupUrl(audienceGroupId), {
+      contentType: 'application/json',
+      headers: this.authHeader(),
+      method: 'delete',
+      muteHttpExceptions: true,
+    }).getContentText();
+  }
+
+  /**
+   * オーディエンスの情報を取得
+   * https://developers.line.biz/ja/reference/messaging-api/#get-audience-group
+   * @param audienceGroupId 
+   */
+  public getAudienceGroup(audienceGroupId: string): string {
+    return UrlFetchApp.fetch(this.getAudienceGroupUrl(audienceGroupId), {
+      contentType: 'application/json',
+      headers: this.authHeader(),
+      method: 'get',
+      muteHttpExceptions: true,
+    }).getContentText();
+  }
+
+  /**
+   * 複数のオーディエンスの情報を取得
+   * https://developers.line.biz/ja/reference/messaging-api/#get-audience-groups
+   * @param {Types.GetAudienceGroupsQueryParam} クエリーパラメタ
+   * @returns {Types.GetAudienceGroupsResponseBody} レスポンスボディ
+   */
+  public getAudienceGroups(queryParam: Types.GetAudienceGroupsQueryParam): Types.GetAudienceGroupsResponseBody {
+    const res: string = UrlFetchApp.fetch(this.getAudienceGroupsUrl(queryParam), {
+      contentType: 'application/json',
+      headers: this.authHeader(),
+      method: 'get',
+      muteHttpExceptions: true,
+    }).getContentText();
+    return JSON.parse(res);
+  }
+
+  /**
+   * オーディエンスの権限レベルを取得
+   * https://developers.line.biz/ja/reference/messaging-api/#get-authority-level
+   */
+  public getAudienceGroupAuthorityLevel(): string {
+    return UrlFetchApp.fetch(this.getAudienceGroupAuthorityLevelUrl(), {
+      contentType: 'application/json',
+      headers: this.authHeader(),
+      method: 'get',
+      muteHttpExceptions: true,
+    }).getContentText();
+  }
+
+  /**
+   * オーディエンスの権限レベルを変更
+   * https://developers.line.biz/ja/reference/messaging-api/#change-authority-level
+   * @param authorityLevel 
+   */
+  public changeAudienceGroupAuthorityLevel(authorityLevel: Types.AudienceGroupAuthorityLevel): string {
+    return UrlFetchApp.fetch(this.changeAudienceGroupAuthorityLevelUrl(), {
+      contentType: 'application/json',
+      headers: this.authHeader(),
+      method: 'put',
+      muteHttpExceptions: true,
+      payload: JSON.stringify({authorityLevel}),
     }).getContentText();
   }
 
@@ -253,6 +454,18 @@ export class Client {
   private replyUrl = () => this.apiUrl('message/reply');
   private multicastUrl = () => this.apiUrl('message/multicast');
   private broadcastUrl = () => this.apiUrl('message/broadcast');
+  private narrowcastUrl = () => this.apiUrl('message/narrowcast');
+  private getNarrowcastProgressUrl = (requestId: string) => this.apiUrl(`message/progress/narrowcast?requestId=${requestId}`);
+  private createUploadAudienceGroupUrl = () => this.apiUrl('audienceGroup/upload');
+  private updateUploadAudienceGroupUrl = () => this.apiUrl('audienceGroup/upload');
+  private createClickAudienceGroupUrl = () => this.apiUrl('audienceGroup/click');
+  private createImpAudienceGroupUrl = () => this.apiUrl('audienceGroup/imp');
+  private setDescriptionAudienceGroupUrl = (audienceGroupId: string) => this.apiUrl(`audienceGroup/${audienceGroupId}/updateDescription`);
+  private deleteAudienceGroupUrl = (audienceGroupId: string) => this.apiUrl(`audienceGroup/${audienceGroupId}`);
+  private getAudienceGroupUrl = (audienceGroupId: string) => this.apiUrl(`audienceGroup/${audienceGroupId}`);
+  private getAudienceGroupsUrl = (params: { [s: string]: unknown; }) => this.apiUrl(`audienceGroup/list?${Object.entries(params).map((e) => `${e[0]}=${e[1]}`).join('=')}`);
+  private getAudienceGroupAuthorityLevelUrl = () => this.apiUrl('audienceGroup/authorityLevel');
+  private changeAudienceGroupAuthorityLevelUrl = () => this.apiUrl('audienceGroup/authorityLevel');
   private contentUrl = (messageId: string) => this.apiUrl(`message/${messageId}/content`);
   private userProfileUrl = (userId: string) => this.apiUrl(`profile/${userId}`);
   private roomMemberProfileUrl = (roomId: string, userId: string) =>
