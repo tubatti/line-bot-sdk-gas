@@ -262,6 +262,184 @@ export class Client {
     }).getContentText();
   }
 
+  /**
+   * 追加メッセージ数の上限目安を取得
+   * https://developers.line.biz/ja/reference/messaging-api/#get-quota
+   * @returns レスポンスコード・レスポンスボディ
+   */
+  public getTargetLimitForAdditionalMessages() {
+    const res = UrlFetchApp.fetch(this.apiUrl('message/quota'), {
+      contentType: 'application/json',
+      headers: this.authHeader(),
+      method: 'get',
+      muteHttpExceptions: true,
+    });
+    const contentObj: Line.TargetLimitForAdditionalMessages = JSON.parse(res.getContentText());
+    const code: number = res.getResponseCode();
+    return {code, contentObj};
+  }
+
+  /**
+   * 当月のメッセージ利用状況を取得
+   * https://developers.line.biz/ja/reference/messaging-api/#get-consumption
+   * @returns レスポンスコード・レスポンスボディ
+   */
+  public getNumberOfMessagesSentThisMonth() {
+    const res = UrlFetchApp.fetch(this.apiUrl('message/quota/consumption'), {
+      contentType: 'application/json',
+      headers: this.authHeader(),
+      method: 'get',
+      muteHttpExceptions: true,
+    });
+    const contentObj: Line.NumberOfMessagesSentThisMonth = JSON.parse(res.getContentText());
+    const code: number = res.getResponseCode();
+    return {code, contentObj};
+  }
+
+  /**
+   * 送信済みの応答メッセージの数を取得
+   * https://developers.line.biz/ja/reference/messaging-api/#get-number-of-reply-messages
+   * @param {string} date メッセージが送信された日付 yyyyMMdd（例：20191231）
+   * @returns レスポンスコード・レスポンスボディ
+   */
+  public getNumberOfSentReplyMessages(date: string) {
+    const res = UrlFetchApp.fetch(this.apiUrl(`message/delivery/reply?date=${date}`), {
+      contentType: 'application/json',
+      headers: this.authHeader(),
+      method: 'get',
+      muteHttpExceptions: true,
+    });
+    const contentObj: Line.NumberOfMessagesSentResponse = JSON.parse(res.getContentText());
+    const code: number = res.getResponseCode();
+    return {code, contentObj};
+  }
+
+  /**
+   * 送信済みのプッシュメッセージの数を取得
+   * https://developers.line.biz/ja/reference/messaging-api/#get-number-of-push-messages
+   * @param {string} date メッセージが送信された日付 yyyyMMdd（例：20191231）
+   * @returns レスポンスコード・レスポンスボディ
+   */
+  public getNumberOfSentPushMessages(date: string) {
+    const res = UrlFetchApp.fetch(this.apiUrl(`message/delivery/push?date=${date}`), {
+      contentType: 'application/json',
+      headers: this.authHeader(),
+      method: 'get',
+      muteHttpExceptions: true,
+    });
+    const contentObj: Line.NumberOfMessagesSentResponse = JSON.parse(res.getContentText());
+    const code: number = res.getResponseCode();
+    return {code, contentObj};
+  }
+
+  /**
+   * 送信済みのマルチキャストメッセージの数を取得
+   * https://developers.line.biz/ja/reference/messaging-api/#get-number-of-multicast-messages
+   * @param {string} date メッセージが送信された日付 yyyyMMdd（例：20191231）
+   * @returns レスポンスコード・レスポンスボディ
+   */
+  public getNumberOfSentMulticastMessages(date: string) {
+    const res = UrlFetchApp.fetch(this.apiUrl(`message/delivery/multicast?date=${date}`), {
+      contentType: 'application/json',
+      headers: this.authHeader(),
+      method: 'get',
+      muteHttpExceptions: true,
+    });
+    const contentObj: Line.NumberOfMessagesSentResponse = JSON.parse(res.getContentText());
+    const code: number = res.getResponseCode();
+    return {code, contentObj};
+  }
+
+  /**
+   * 送信済みのブロードキャストメッセージの数を取得
+   * https://developers.line.biz/ja/reference/messaging-api/#get-number-of-broadcast-messages
+   * @param {string} date メッセージが送信された日付 yyyyMMdd（例：20191231）
+   * @returns レスポンスコード・レスポンスボディ
+   */
+  public getNumberOfSentBroadcastMessages(date: string) {
+    const res = UrlFetchApp.fetch(this.apiUrl(`message/delivery/broadcast?date=${date}`), {
+      contentType: 'application/json',
+      headers: this.authHeader(),
+      method: 'get',
+      muteHttpExceptions: true,
+    });
+    const contentObj: Line.NumberOfMessagesSentResponse = JSON.parse(res.getContentText());
+    const code: number = res.getResponseCode();
+    return {code, contentObj};
+  }
+
+  /**
+   * メッセージの送信数を取得
+   * https://developers.line.biz/ja/reference/messaging-api/#get-number-of-delivery-messages
+   * @param {string} date 確認する日付 yyyyMMdd（例：20191231）
+   * @returns レスポンスコード・レスポンスボディ
+   */
+  public getNumberOfMessageDeliveries(date: string) {
+    const res = UrlFetchApp.fetch(this.apiUrl(`insight/message/delivery?date=${date}`), {
+      contentType: 'application/json',
+      headers: this.authHeader(),
+      method: 'get',
+      muteHttpExceptions: true,
+    });
+    const contentObj: Line.NumberOfMessageDeliveriesResponse = JSON.parse(res.getContentText());
+    const code: number = res.getResponseCode();
+    return {code, contentObj};
+  }
+
+  /**
+   * 友だち数を取得
+   * https://developers.line.biz/ja/reference/messaging-api/#get-number-of-followers
+   * @param {string} date 確認する日付 yyyyMMdd（例：20191231）
+   * @returns レスポンスコード・レスポンスボディ
+   */
+  public getNumberOfFollowers(date: string) {
+    const res = UrlFetchApp.fetch(this.apiUrl(`insight/followers?date=${date}`), {
+      contentType: 'application/json',
+      headers: this.authHeader(),
+      method: 'get',
+      muteHttpExceptions: true,
+    });
+    const contentObj: Line.NumberOfFollowersResponse = JSON.parse(res.getContentText());
+    const code: number = res.getResponseCode();
+    return {code, contentObj};
+  }
+
+  /**
+   * 友だちの属性情報に基づく統計情報を取得
+   * https://developers.line.biz/ja/reference/messaging-api/#get-demographic
+   * @param {string} date 確認する日付 yyyyMMdd（例：20191231）
+   * @returns レスポンスコード・レスポンスボディ
+   */
+  public getFriendDemographics() {
+    const res = UrlFetchApp.fetch(this.apiUrl(`insight/demographic`), {
+      contentType: 'application/json',
+      headers: this.authHeader(),
+      method: 'get',
+      muteHttpExceptions: true,
+    });
+    const contentObj: Line.FriendDemographics = JSON.parse(res.getContentText());
+    const code: number = res.getResponseCode();
+    return {code, contentObj};
+  }
+
+  /**
+   * ユーザーの操作に基づく統計情報を取得
+   * https://developers.line.biz/ja/reference/messaging-api/#get-message-event
+   * @param {string} date 確認する日付 yyyyMMdd（例：20191231）
+   * @returns レスポンスコード・レスポンスボディ
+   */
+  public getUserInteractionStatistics(requestId: string) {
+    const res = UrlFetchApp.fetch(this.apiUrl(`insight/message/event?requestId=${requestId}`), {
+      contentType: 'application/json',
+      headers: this.authHeader(),
+      method: 'get',
+      muteHttpExceptions: true,
+    });
+    const contentObj: Line.UserInteractionStatistics = JSON.parse(res.getContentText());
+    const code: number = res.getResponseCode();
+    return {code, contentObj};
+  }
+
   public getProfile(userId: string): Line.Profile {
     return JSON.parse(
       UrlFetchApp.fetch(this.userProfileUrl(userId), {
