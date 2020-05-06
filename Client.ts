@@ -641,7 +641,7 @@ export class Client {
   private setDescriptionAudienceGroupUrl = (audienceGroupId: string) => this.apiUrl(`audienceGroup/${audienceGroupId}/updateDescription`);
   private deleteAudienceGroupUrl = (audienceGroupId: string) => this.apiUrl(`audienceGroup/${audienceGroupId}`);
   private getAudienceGroupUrl = (audienceGroupId: string) => this.apiUrl(`audienceGroup/${audienceGroupId}`);
-  private getAudienceGroupsUrl = (params: { [s: string]: unknown; }) => this.apiUrl(`audienceGroup/list?${Object.entries(params).map((e) => `${e[0]}=${e[1]}`).join('=')}`);
+  private getAudienceGroupsUrl = (params: { [s: string]: unknown; }) => this.apiUrl(`audienceGroup/list?${Object.entries(params).map((e) => `${e[0]}=${e[1]}`).join('&')}`);
   private getAudienceGroupAuthorityLevelUrl = () => this.apiUrl('audienceGroup/authorityLevel');
   private changeAudienceGroupAuthorityLevelUrl = () => this.apiUrl('audienceGroup/authorityLevel');
   private contentUrl = (messageId: string) => this.apiUrl(`message/${messageId}/content`);
